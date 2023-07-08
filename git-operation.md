@@ -16,6 +16,7 @@
 1. git push -u origin main
    1. 同步到远程仓库
    2. 关掉科学上网~
+   3. connection was reset 和 couldn't connect to server 是网速问题
 
 ## 本地文件删除导致报错
 

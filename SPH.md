@@ -85,6 +85,49 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 
 ## 开始实现
 
-### header 和 footer 非路由组件创建
+### 非路由组件创建（footer、header）
 
-1.
+0. 基于静态页面，项目的实现不关注 html+css，关注项目业务与逻辑
+1. 项目开发的流程
+   1. 首先写静态页面，html+css
+   2. 拆分组件——为什么要拆分组件？怎么拆分组件？怎么创建组件？
+   3. 获取服务器的数据动态展示——axios
+   4. 实现相应的动态业务逻辑——？
+2. 创建非路由组件组件流程(以 header 为例)
+   1. components 文件夹下创建两个文件夹 Footer、Header，并创建 index.vue 文件
+      - 创建组件时，要确定组件结构+组件样式+图片资源
+   2. 把静态页面的结构放好
+      - 把静态页面里面的 html 结构*代码复制*，放到上述 index.vue 的 template 标签中
+   3. 把静态页面的样式放好
+      - 因为本项目采用 less 构建样式，安装 less、less-loader 才能被浏览器识别
+        - less-loader 版本过高会报错
+        - 直接指定版本号`[c]npm install --save less less-loader@5`
+        - `npm uninstall -g less-loader`卸载
+        - 让组件识别 less 样式，需要设定 style 属性为 lang = less
+      1. less 样式*代码复制*，放到上述 index.vue 的 style 标签中
+         1. 将组件引入到 App.vue 文件中
+            - 引入：import 导入组件`import Header from './components/Header'`
+            - 注册：export 指定 components`export default {name:,components:{}}`
+            - 使用：组件名称创建标签`<Header></Header>`写在 template 中
+         2. 将组件中用到的静态资源放到组件文件夹下，如 Header/images/logo.png
+      2. 将通用样式的 reset.css*文件复制*，放到 public 中
+         - 将 reset.css 文件 link 引入到 public/index.html 中
+3. 简易流程
+   - 创建或者定义组件
+   - App.vue 中
+     - 引入
+     - 注册
+     - 使用
+4. 操作过程中发现 eslint 校验没有被关闭？
+   - 如提示 `Component name "Header" should always be multi-word.eslint`
+   - Header/index.vue 文件中 script 的 export default 部分
+
+### 路由组件创建（home、search、login、register）
+
+0. 路由组件的创建不同于非路由组件，需要 vue-router 插件
+   - 安装命令`npm install --save vue-router`
+1. 路由组件和非路由组件缩放的位置也不同
+   - components 文件夹：非路由组件——全局公用组件
+   - pages 或 views 文件夹：路由组件
+   - 同样是在 src 文件夹下，
+2.
