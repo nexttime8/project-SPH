@@ -1,7 +1,5 @@
 <template>
-  <div>
-    我是home
-  </div>
+  <TypeNav/>
 </template>
 
 <script>

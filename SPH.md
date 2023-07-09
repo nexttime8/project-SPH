@@ -1,5 +1,7 @@
 # 项目概要
 
+## 项目结构
+
 1. Vue 前台项目
 
    - Vue 前台项目，尚品汇电商平台，类似于京东电商类项目
@@ -88,12 +90,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 ### 非路由组件创建（footer、header）
 
 0. 基于静态页面，项目的实现不关注 html+css，关注项目业务与逻辑
-1. 项目开发的流程
-   1. 首先写静态页面，html+css
-   2. 拆分组件——为什么要拆分组件？怎么拆分组件？怎么创建组件？
-   3. 获取服务器的数据动态展示——axios
-   4. 实现相应的动态业务逻辑——？
-2. 创建非路由组件组件流程(以 header 为例)
+1. 创建非路由组件组件流程(以 header 为例)
    1. components 文件夹下创建两个文件夹 Footer、Header，并创建 index.vue 文件
       - 创建组件时，要确定组件结构+组件样式+图片资源
    2. 把静态页面的结构放好
@@ -112,13 +109,13 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
          2. 将组件中用到的静态资源放到组件文件夹下，如 Header/images/logo.png
       2. 将通用样式的 reset.css*文件复制*，放到 public 中
          - 将 reset.css 文件 link 引入到 public/index.html 中
-3. 简易流程
+2. 简易流程
    - 创建或者定义组件
    - App.vue 中
      - 引入
      - 注册
      - 使用
-4. 【eslint 使用问题】操作过程中发现 eslint 校验没有被关闭？
+3. 【eslint 使用问题】操作过程中发现 eslint 校验没有被关闭？
    - 如提示 `Component name "Header" should always be multi-word.eslint`
    - Header/index.vue 文件中 script 的 export default 部分
    - gpt 回答：
@@ -128,7 +125,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
    - 可以是给代码添加`// eslint-disable-next-line no-unused-vars`，指定对下一行禁用 eslint
    - 可以关闭 eslint 插件
    - 可以在 eslint 配置文件中修改，设置`rules: {"no-unused-vars": "off",},`
-5. 【eslint 使用问题】eslint 如何配置？
+4. 【eslint 使用问题】eslint 如何配置？
    - 保存会自动添加上分号怎么消除？
    - 发现是 prettier 插件的问题，设置取消勾选 semicolo 即可
 
@@ -322,5 +319,49 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 ### 问题引入：编程式路由跳转到当前路由（参数不变），多次执行会抛出 NavigationDuplicated 的警告错误
 
 1. vue-router3.6.5 有 promise，查看 this.$route.push 的返回值，是 promise 有成功还是失败的回调，resolve 和 reject
-   - 解决：添加两个回调()=>{},()=>{}或者()=>{},(e)=>{console.log(e)}
-2. 
+   - 解决 1：push 参数最后添加两个回调()=>{},()=>{}或者()=>{},(e)=>{console.log(e)}
+   - 解决 2：重写 push 方法
+2. 明确：this 是当前组件实例，this.$router 是当前组件实例的属性值 VueRouter 类的一个实例，main.js 入口文件注册路由时给组件实例添加的 router，this.$route.push 在 this.$router 实例上没有，但是在其 VueRouter 原型对象上有
+3. 其实就是要在 router 的 index.js 文件中重写 `VueRouter.prototype.push = function(){}`
+   - 这里面的 this 是 VueRouter 类的实例
+   - 在 router 的 index.js 文件中重写
+   - 重写步骤
+     1. 先保存原型里面的 push 方法 `let originPush = VueRouter.prototype.push;`
+     2. 重写
+        - 传参：location 跳转位置，resolve 成功回调，reject 失败回调
+        - 当 resolve 和 reject 都存在时，调用 originPush 方法
+          - 该方法需要通过 call/apply 方法调用，因为函数本身的 this 是 window，而我们要让上下文为 VueRouter 类实例
+          - `originPush.call(this,location,resolve,reject)`
+          - 引申：apply 方法和 call 方法的相同和不同点
+        - 当 resolve 和 reject 都不存在时
+          - `originPush.call(this,location,()=>{},()=>{})`
+
+### 拆分 home 模块组件
+
+1. 流程
+   1. 编写静态页面 html+css
+   2. 拆分静态组件——为什么要拆分组件？怎么拆分组件？怎么创建组件？
+   3. 获取服务器的数据动态展示——axios
+   4. 实现相应的动态业务逻辑——？
+2. home 模块拆分
+   1. 三级联动？home 用到了、search 用到了、商品详情页用到了
+      - 全局组件：注册一次项目任意地方使用，多个模块使用
+   2. 轮播图+尚品汇快报=》一个整体组件
+   3. 今日推荐=》一个组件
+   4. 热卖排行=》一个组件
+   5. 猜你喜欢=》一个组件
+   6. 家用电器=手机通讯=》复用的一个组件
+   7. logo=》一个组件
+
+## 组件实现
+
+1. 全局组件组件创建流程
+   1. 在 pages 中的对应模块，创建组件名文件夹，并创建 index.vue 文件
+   2. 同样的：html 结构、css 样式、静态资源放到 index.vue 文件中
+   3. 在 main.js 文件中注册全局组件
+      1. 先引入`import TypeNav from '@/pages/Home/TypeNav`
+      2. 再注册为全局组件
+   4. 使用
+      1. 全局组件不需要再 Home/index.vue 中引入
+      2. 直接使用<TypeNav/>
+      3. 为什么是单标签？为什么前面 header 等都是双标签？
