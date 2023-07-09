@@ -13,7 +13,10 @@
 
 ## 将本地 Git 仓库中的提交推送到远程 Git 仓库流程
 
-1. `git push -u origin main`
+0. 创建远程 git 仓库
+1. `git remote add origin https://github.com/nexttime8/xxx.git`
+2. `git branch -M main`
+3. `git push -u origin main`
    1. 同步到远程仓库
    2. 关掉科学上网~
    3. connection was reset 和 couldn't connect to server 是网速问题

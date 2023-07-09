@@ -408,4 +408,42 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 3. 其余静态组件创建尝试
    - 出现报错：Unknown custom element: <TodayRecommend> - did you register the component correctly? For recursive components, make sure to provide the "name" option.
    - 页面只有>=`00%的时候才会显示 TodayRecommend 组件
-   
+
+## 接口测试
+
+1. vue.config.js 文件，配置代理跨域，设置最新的接口地址
+   ```js
+   module.exports = defineConfig({
+     devServer: {
+       proxy: {
+         "/api": {
+           target: "http://gmall-h5-api.atguigu.cn",
+         },
+       },
+     },
+   })
+   ```
+2. 接口到底是什么？可以自己写吗？要买吗？
+3. postman 工具测试接口能否使用
+   - code 为 200 表示返回数据成功
+   - 所有的接口都有/api 前缀
+
+## axios 二次封装
+
+1. 面试会要求手写原生 axios ，会问会用 axios 是不是自己重写的
+2. 发请求、获取数据、展示数据
+   - 发请求：XMLHttpRequest fetch Jquery Axios
+   - 项目中一般选择 Axios
+3. 为什么要对 Axios 进行二次封装？
+   - 主要要用到 axios 的请求拦截器和响应拦截器
+   - 请求拦截器：发请求之前处理业务
+   - 响应拦截器：服务器返回数据之后处理业务
+4. 进入到 app 目录下，安装 axios
+   - `npm install --save axios`
+   - 在 package.json 文件中查看是否安装成功，及其版本
+5. 项目中的 api 文件夹，就是关于 axios 的
+   - 在 src 文件夹下创建 api 文件夹
+   - 在 api 文件夹中创建 request.js 文件
+   - 在 request.js 文件中对 axios 进行封装
+6. axios 封装流程
+   1.
