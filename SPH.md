@@ -355,9 +355,9 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 
 ## 组件实现
 
-1. 全局组件组件创建流程
+1. 全局组件创建流程
    1. 在 pages 中的对应模块，创建组件名文件夹，并创建 index.vue 文件
-   2. 同样的：html 结构、css 样式、静态资源放到 index.vue 文件中
+   2. 同样的注意（无论是否全局组件）：html 结构、css 样式、静态资源放到 index.vue 文件中
    3. 在 main.js 文件中注册全局组件
       1. 先引入`import TypeNav from '@/pages/Home/TypeNav`
       2. 再注册为全局组件
@@ -365,3 +365,38 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       1. 全局组件不需要再 Home/index.vue 中引入
       2. 直接使用<TypeNav/>
       3. 为什么是单标签？为什么前面 header 等都是双标签？
+2. 其余静态组件创建流程——以 ListContainer 为例
+   1. html+css+静态资源
+   2. 引入
+      - 在 Home/index.vue 的 script 中引入`import ListContainer from '@/pages/Home/ListContainer'`
+   3. 注册
+      - 在 Home/index.vue 中注册
+      ```js
+      export default {
+        name: "", // 为什么这里不用写？
+        components: {
+          // 必须要s
+          ListContainer,
+        },
+      }
+      ```
+   4. 使用
+      - 出现报错 Errors compiling template:Component template should contain exactly one root element. If you are using v-if on multiple elements, use v-else-if to chain them instead.
+      ```html
+      <template>
+        <TypeNav />
+        <ListContainer />
+      </template>
+      ```
+      应该改成
+      ```html
+      <template>
+        <div>
+          <TypeNav />
+          <ListContainer />
+        </div>
+      </template>
+      ```
+   5. 显示问题
+      - 因为是静态资源，所以轮播图在 home 的 index.vue 中暂时只显示一个！
+3.
