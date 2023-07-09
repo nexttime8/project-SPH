@@ -367,6 +367,12 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       3. 为什么是单标签？为什么前面 header 等都是双标签？
 2. 其余静态组件创建流程——以 ListContainer 为例
    1. html+css+静态资源
+      - 静态组件下的 index.vue 不需要写 name
+      ```js
+      export default {
+        name: "",
+      }
+      ```
    2. 引入
       - 在 Home/index.vue 的 script 中引入`import ListContainer from '@/pages/Home/ListContainer'`
    3. 注册
@@ -399,4 +405,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       ```
    5. 显示问题
       - 因为是静态资源，所以轮播图在 home 的 index.vue 中暂时只显示一个！
-3.
+3. 其余静态组件创建尝试
+   - 出现报错：Unknown custom element: <TodayRecommend> - did you register the component correctly? For recursive components, make sure to provide the "name" option.
+   - 页面只有>=`00%的时候才会显示 TodayRecommend 组件
+   

@@ -113,8 +113,7 @@
   <script>
   
   export default {
-    name: 'ListContainer',
-
+    name: '',
   }
   </script>
   

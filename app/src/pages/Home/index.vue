@@ -2,16 +2,36 @@
   <div>
     <TypeNav/>
     <ListContainer/>
+    <TodayRecommend/>
+    <Rank/>
+    <Like/>
+    <Floor/>
+    <Phone/>
+    <Brand/>
   </div>
 </template>
 
 <script>
+
 import ListContainer from '@/pages/Home/ListContainer'
+import TodayRecommend from '@/pages/Home/TodayRecommend'
+import Rank from '@/pages/Home/Rank'
+import Like from '@/pages/Home/Like'
+import Floor from '@/pages/Home/Floor'
+import Phone from '@/pages/Home/Phone'
+import Brand from '@/pages/Home/Brand'
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
-  name: '',//Component name "" should always be multi-word.xxx-yyy
+  name: '',
   components: {
-    ListContainer
+    ListContainer,
+    TodayRecommend,
+    Rank,
+    Like,
+    Floor,
+    Phone,
+    Brand,
   }
 }
 </script>
