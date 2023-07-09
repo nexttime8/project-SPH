@@ -118,16 +118,209 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
      - 引入
      - 注册
      - 使用
-4. 操作过程中发现 eslint 校验没有被关闭？
+4. 【eslint 使用问题】操作过程中发现 eslint 校验没有被关闭？
    - 如提示 `Component name "Header" should always be multi-word.eslint`
    - Header/index.vue 文件中 script 的 export default 部分
+   - gpt 回答：
+     - 确保 vue.config.js 文件在项目根目录下
+     - 删除 node_modules 文件夹，重新 npm install 进行安装
+     - 如果你的项目中使用了其他 lint 工具，例如 ESLint 或 Prettier，它们可能会覆盖或修改 lintOnSave 配置。请检查其他配置文件，如 .eslintrc.js 或 .prettierrc.js，确保没有与 lintOnSave 冲突的配置。
+   - 可以是给代码添加`// eslint-disable-next-line no-unused-vars`，指定对下一行禁用 eslint
+   - 可以关闭 eslint 插件
+   - 可以在 eslint 配置文件中修改，设置`rules: {"no-unused-vars": "off",},`
+5. 【eslint 使用问题】eslint 如何配置？
+   - 保存会自动添加上分号怎么消除？
+   - 发现是 prettier 插件的问题，设置取消勾选 semicolo 即可
 
 ### 路由组件创建（home、search、login、register）
 
 0. 路由组件的创建不同于非路由组件，需要 vue-router 插件
    - 安装命令`npm install --save vue-router`
-1. 路由组件和非路由组件缩放的位置也不同
+1. 路由组件与非路由组件创建的区别
    - components 文件夹：非路由组件——全局公用组件
-   - pages 或 views 文件夹：路由组件
-   - 同样是在 src 文件夹下，
-2.
+   - 命名为 pages 或 views 文件夹：路由组件
+     - 在路由组件文件夹下同样是创建 index.vue 文件
+   - 同样是在 src 文件夹下，同样组件都是以文件夹的形式
+2. 项目路由配置文件
+   - 路由组件除了组件放在 pages 文件夹以外，还要配置项目路由，命名为 router 文件夹，和 components 和 pages 文件夹同级
+   - 创建 index.js 文件在 router 文件夹中
+   - 项目配置文件内容
+     1. 引入 vue`import Vue from 'vue'`
+     2. 引入 vue-router`import VueRouter from 'vue-router' `
+     3. 使用插件`Vue.use(VueRouter)`
+     4. 引入路由组件`import Home from '@/pages/Home'等`
+     5. 配置路由
+        ```js
+        export default new VueRouter({
+          routes: [
+            {
+              path: "/home",
+              component: Home,
+            },
+            {
+              // 类似
+            },
+          ],
+        })
+        ```
+        - 这里的都属于一级路由？
+     6. 在 main.js 入口文件注册
+        - 引入路由
+          - `import router from "@/router"`
+        - 注册路由
+          - Vue 实例里面写`router,`
+        - 原来有的
+          - 引入 vue
+            - `import Vue from "vue"`
+          - 引入 app.vue
+            - `import App from "./App.vue"`
+          - Vue 实例里面 render 渲染页面，并挂载到 id 为 app 的元素上
+            ```js
+            new Vue({
+              render: (h) => h(App),
+              router,
+            }).$mount("#app")
+            ```
+     7. 路由组件出口
+        - 在 App.vue 文件的 template 标签中添加 rooter-view 标签
+3. 路由组件一切完毕，出现报错 export 'default' (imported as 'VueRouter') was not found in 'vue-router'
+   1. 问题及其解答
+      - vue 和 vue-router 版本不兼容问题
+      - vue2 搭配 vue-router3
+      - vue3 搭配 vue-router4
+      - 重新安装 vue-router3 解决
+      - `npm uninstall vue-router`
+      - `npm install vue-router@3`
+   2. 路由组件项目配置完毕，便可通过直接在网页添加路由？进行跳转
+4. 路由组件和非路由组件的区别
+   1. 放置位置不同
+   2. 使用方式不同
+      - 路由组件需要在 router 文件夹中进行注册，使用的是组件的名字；非路由组件以标签的形式使用。
+      - 路由组件在 main.js 入口文件中注册 router
+5. 路由组件和非路由组件的相同点
+   1. 注册完，组件身上都拥有了$route和$router 属性
+      - $route 是获取路由信息，有path、query 、 params、fullPath 和 meta 属性，非路由组件上也有$route
+      - $router 是一般进行编程式导航
+6. 进行路由重定向
+   - 要在项目跑起来的时候，访问/，立马定向到首页
+   - 路由配置都是在 router 文件夹下的 index.js 文件中配置
+   ```js
+   {
+      path: "*",
+      redirect: "/home",// 重定向
+   },
+   ```
+7. 路由的跳转
+   1. 声明式导航 router-link
+      - 必须有 to 属性，`to="/login"`
+      - 实质就是 a 标签，但是不需要 title、href 和 target 属性
+   2. 编程式导航 push|replace
+      - 编程式导航除了可以进行路由跳转，还有其他业务逻辑
+      - 声明式导航能做的，编程式导航都能做
+   3. 将 register、login、home 用声明式导航，search 用编程式导航
+      - 声明式导航，将 a 标签改成 router-link 标签
+        - class 保留，href、target、title 等删除
+      - 编程式导航，给标签添加@click="函数名"
+        - 在 script 标签的 export default 中添加 methods:{}
+        - 定义函数为 `函数名(){this.$router.push('/search')}`
+
+### 组件的显示与隐藏（footer 非路由组件可选）
+
+1. 进入 login 和 register 路由组件的时候，footer 这个非路由组件不显示
+2. 显示与隐藏？
+   - v-if 是真正的操作 dom，频繁操作 dom 会导致性能下降
+   - v-show 是通过样式让样式显示与隐藏
+3. v-show 依据什么，boolean 值
+   1. 路由信息？
+      - $route.path 为 `'/home'` 或 `'/search'` 时显示
+   2. 路由元信息
+      - 配置 meta 字段
+      - 是与 routes 配置的路由中的 path、component 同级的属性
+        - home 和 search 的路由中设置`meta:{show:true}`，login 和 register 的路由中设置为 false
+      - 属性名是固定的，只能有 path、query 、params、fullPath 、name 和 meta 属性
+   3. 设置 v-show
+      - App.vue 中设置<Footer v-show="$route.meta.show"></Footer>
+4. 路由传参-路由参数，参数写法
+   1. params：属于路径中的一部分，在配置路由的时候，需要占位？
+   2. query 参数：不属于路径中的一部分，类似于 ajax 中的 queryString？/home?k=v&kv=，不需要占位？
+5. 路由传参
+   - 给 input 标签设置 v-model 为"keyword"，export default 里面
+   ```js
+   data(){
+      return {
+         keyword:''
+      }
+    },
+   ```
+   - 为什么$route 可以获取到 input 输入的值？
+6. 路由传参方法
+   - 在路由中配置占位 `path: "/search/:keyword`
+   - 无论一下那种方法，都需要配置占位符！才能在 url 中显示 keyword
+   1. 字符串形式传递
+      1. params 参数
+         - push 改成`this.$router.push("/search"+this.keyword)`
+      2. query 参数
+         - push 改成`this.$router.push("/search"+this.keyword+"?k="+this.keyword.toUpperCase())`
+         - 这样传递了两个参数，params 和 query
+      3. 可以获取到传入的参数
+         - `$route.params.keyword`
+         - `$route.query.k`
+   2. 模板字符串形式传递
+      ```js
+      this.$router.push(
+        `/search/${this.keyword}?k=${this.keyword.toUpperCase()}`
+      )
+      ```
+   3. 对象形式传递
+      - 需要在路由中配置 name 属性
+        - `name:"search"`
+      ```js
+      this.$router.push({
+        name: "search",
+        params: { keyword: this.keyword },
+        query: { k: this.keyword.toUpperCase() },
+      })
+      ```
+      - 不能用 path 写法
+7. 设置完了，也获取到了 params 和 query，但是网址显示不正确？没有显示 params？
+   - http://localhost:8080/#/search?k=ASDFASD
+   - 一直没有关注 console！
+   - 因为没有在目标路由正确定义 keyword 参数！
+   - `path: '/search/:keyword'`
+8. 为什么 data 写成函数的形式？
+   ```js
+   export default {
+     // eslint-disable-next-line vue/multi-word-component-names
+     name: "Header",
+     data() {
+       return {
+         keyword: "",
+       }
+     },
+   }
+   ```
+9. 报错 Refused to apply style from 'http://localhost:8080/iconfont.css' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+10. 路由传参相关面试题
+
+- 路由传递参数（对象写法）path 是否可以结合 params 参数一起使用？
+  - 不可以，
+- 如何指定 params 参数可传可不传？
+  - 对象指定的时候如果不传 params，会导致 search 消失
+  - 应该通过占位的时候指定 params 可传可不传
+  - `path: '/search/:keyword?'`也就是加一个问号
+  - 类似于正则
+- params 参数可以传递也可以不传递，但是如果传递是空串，如何解决？
+  - 对象指定的时候如果 params 为空串，会导致 search 消失
+  - 用 undefined 解决''||undefined
+  - this.$router.push({name:"search",params:{ keyword:''||undefined} })
+- 路由组件能不能传递 props 数据？
+  - 可以，有三种写法（路由组件可以传递 props）
+    - 布尔值写法，给路由组件传递参数 `props:true`， 路由组件本身可以接收 `props:['keyword']`（只能 params 参数）；之后路由组件身上多了一个$attrs ，有 keyword 属性
+    - 对象写法，给路由组件传递对象 `props:{k:v}`，路由组件本身可以接收 `props:['k']`；之后路由组件身上多了一个$attrs ，有 k 属性
+    - 函数写法，params 参数和 query 参数都通过 props 传递给路由组件`props:(route)=>{return keyword:$route.params.keyword,k:$route.query.k}`或者`props:(route)=>({keyword:$route.params.keyword,k:$route.query.k})`；之后路由组件身上多了一个$attrs ，有 k 属性，同时 props 里面有 keyword
+
+### 问题引入：编程式路由跳转到当前路由（参数不变），多次执行会抛出 NavigationDuplicated 的警告错误
+
+1. vue-router3.6.5 有 promise，查看 this.$route.push 的返回值，是 promise 有成功还是失败的回调，resolve 和 reject
+   - 解决：添加两个回调()=>{},()=>{}或者()=>{},(e)=>{console.log(e)}
+2. 
