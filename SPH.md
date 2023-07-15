@@ -509,4 +509,13 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 
 ## nprogress 进度条插件
 
-1. 
+1. 进入到 app 路径下，安装 nprogress 包，在 package.json 中验证是否安装了依赖
+   - `cd api`
+   - `npm install --save nprogress`
+2. 进度条在拦截器中使用
+   1. 引入 nprogress，done、start 方法代表进度条结束和开始
+      - `import nprogress from 'nprogress'`
+   2. 引入进度条样式
+      - `import "nprogress/nprogress.css"`
+   3. 可以直接在 node_modules 文件夹中的 nprogress/nprogress.css 中直接修改进度条的样式
+   4. 请求拦截器中调用 start，相应拦截其中调用 done
