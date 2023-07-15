@@ -430,20 +430,83 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 
 ## axios 二次封装
 
-1. 面试会要求手写原生 axios ，会问会用 axios 是不是自己重写的
-2. 发请求、获取数据、展示数据
-   - 发请求：XMLHttpRequest fetch Jquery Axios
-   - 项目中一般选择 Axios
-3. 为什么要对 Axios 进行二次封装？
-   - 主要要用到 axios 的请求拦截器和响应拦截器
-   - 请求拦截器：发请求之前处理业务
-   - 响应拦截器：服务器返回数据之后处理业务
-4. 进入到 app 目录下，安装 axios
-   - `npm install --save axios`
-   - 在 package.json 文件中查看是否安装成功，及其版本
-5. 项目中的 api 文件夹，就是关于 axios 的
-   - 在 src 文件夹下创建 api 文件夹
-   - 在 api 文件夹中创建 request.js 文件
-   - 在 request.js 文件中对 axios 进行封装
-6. axios 封装流程
-   1.
+1.  面试会要求手写原生 axios ，会问会用 axios 是不是自己重写的
+2.  发请求、获取数据、展示数据
+    - 发请求：XMLHttpRequest fetch JQuery Axios
+    - 项目中一般选择 Axios
+3.  为什么要对 Axios 进行二次封装？
+    - 主要要用到 axios 的请求拦截器和响应拦截器
+    - 请求拦截器：发请求之前处理业务
+    - 响应拦截器：服务器返回数据之后处理业务
+4.  进入到 app 目录下，安装 axios
+    - `npm install --save axios`
+    - 在 package.json 文件中查看是否安装成功，及其版本
+5.  项目中的 api 文件夹，就是关于 axios 的
+    - 在 src 文件夹下创建 api 文件夹
+    - 在 api 文件夹中创建 request.js 文件
+    - 在 request.js 文件中对 axios 进行封装
+6.  axios 封装流程
+    1. 引入 axios`import axios from "axios"`
+    2. 利用 axios 对象的 create 方法，创建 axios 实例，create 方法里面传入配置对象
+       - 配置基础路径`baseURL:"/api"`
+       - 配置请求超时的时间`time:5000`
+    3. 请求拦截器 interceptors
+    ```js
+    axios对象.interceptors.request.use((config) => {
+      return config // 配置对象config，里面的headers请求头属性很重要
+    })
+    ```
+    - 在请求发出之前处理业务
+    4. 响应拦截器
+    ```js
+    axios对象.interceptors.response.use(
+      (res) => {
+        return res.data
+      },
+      (err) => {
+        return Promise.reject(new Error("false"))
+      }
+    )
+    ```
+        - 直接看 git 或者 npm 的 axios 文档
+    5. 对外暴露
+       - `export default axios对象`
+7.  对 axios 二次封装，就是引入 axios 后，创建 axios 对象，传入一定的配置项如超时时间、基础路径，设置请求拦截器和响应拦截器，再将这个 aixos 对象对外暴露
+
+## 接口统一管理
+
+1. 两种情形
+   1. 项目小、接口少、组件少，可以直接在组件的生命周期函数中发请求
+   2. 项目大，axios.get('')统一管理接口
+2. api 文件夹下创建 index.js 文件，用于统一管理接口
+   1. 引入二次封装的 axios
+   2. 对外暴露一个箭头函数
+   3. 箭头函数里面发请求，用 axios 的函数的形式，传入配置对象
+      - `requests({url:'',method:'get'})`
+      - 并用上述作为返回结果
+      - axios 发请求返回结果是 Promise 对象
+3. 使用接口
+   1. 在 main.js 文件中引入
+      - `import { reqCategoryList } from "@/api"`
+      - 为什么不需要指定文件名？
+      - 分别暴露，所以用{}
+   2. 调用 index.js 中的函数
+4. 解决跨域问题
+   1. 协议、域名、端口号不同
+   2. webpack 提供功能 DevServer，vue.config.js 文件当作是 webpack.config.js 文件，在里面配置
+   ```js
+   devServer: {
+      proxy: {
+         "/api": {
+         target: "http://gmall-h5-api.atguigu.cn",
+         // pathRewrite:{'^/api':''}
+         },
+      },
+   }
+   ```
+   3. 解决方法：proxy、CORS、JSONP
+   4. 服务器和服务器之间没有跨域问题，浏览器才有跨域问题
+
+## nprogress 进度条插件
+
+1. 

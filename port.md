@@ -7,7 +7,7 @@
 5. 购物车 get：/api/cart/cartList
 6. 加入购物车 post：/api/cart/addToCart/{ skuId:商品 ID }/{ skuNum:商品增减 }
 7. 切换商品选中状态 get：/api/cart/checkCart/{skuI:商品 ID}/{isChecked:选中与否 0 否}
-8. 删除商品 **delete**：/api/cart/deleteCart/{skuId}
+8. 删除商品 delete：/api/cart/deleteCart/{skuId}
 9. 订单交易页信息 get：/api/order/auth/trade
 10. 我的订单列表 get：/api/order/auth/{page:页码}/{limit:每页数量}
 11. 提交订单 post：/api/order/auth/submitOrder?tradeNo={tradeNo: 交易编号}
