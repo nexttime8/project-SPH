@@ -21,6 +21,8 @@ import Floor from '@/pages/Home/Floor'
 import Phone from '@/pages/Home/Phone'
 import Brand from '@/pages/Home/Brand'
 
+import {mapState,mapActions} from 'vuex'
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: '',
@@ -32,6 +34,12 @@ export default {
     Floor,
     Phone,
     Brand,
+  },
+  methods:{
+    
+  },
+  computed:{
+    
   }
 }
 </script>
