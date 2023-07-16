@@ -2,9 +2,10 @@
     <!-- 商品分类导航 -->
     <div class="type-nav">
             <div class="container">
-                <div @mouseleave="leaveIndex()">
+                <div @mouseenter="enterShow" @mouseleave="leaveShow"><!--不需要()调用传递返回值-->
                     <h2 class="all">全部商品分类</h2>
-                    <div class="sort">
+                    <transition name="sort">
+                        <div class="sort" v-show="show">
                         <div class="all-sort-list2" @click="goSearch">
                             <div
                                 class="item bo"
@@ -44,6 +45,7 @@
                             </div>
                         </div>
                     </div>
+                    </transition>
                 </div>
                 <nav class="nav">
                     <a href="###">服装城</a>
@@ -67,11 +69,15 @@
     data(){
         return {
             currentIndex:-1,
+            show:true
         }
     },
     // 组件挂载完毕，向服务器发起请求
     mounted(){
-        this.$store.dispatch('home/categoryList')
+        // this.$store.dispatch('home/categoryList')
+        if(this.$route.path!='/home'){
+            this.show=false
+        }
     },
     computed:{
         ...mapState({
@@ -81,9 +87,6 @@
     methods:{
         enterIndex(index){
             this.currentIndex = index
-        },
-        leaveIndex(){
-            this.currentIndex = -1
         },
         goSearch(e){
             let {categoryname,category1id,category2id,category3id} = e.target.dataset
@@ -100,7 +103,16 @@
                 location.query = query
                 this.$router.push(location)
             }
-        }
+        },
+        enterShow(){
+            this.show=true
+        },
+        leaveShow(){
+            this.currentIndex = -1
+            if(this.$route.path!='/home'){
+                this.show=false
+            }
+        },
     }
   }
   </script>
@@ -226,6 +238,24 @@
                     }
                 }
             }
+            .sort-enter{
+                height:0px;
+            }
+            .sort-enter-to{
+                height:461px;
+            }
+            .sort-enter-active{
+                transition: all .2s linear;
+            }
+            // .sort-leave{
+            //     height:461px;
+            // }
+            // .sort-leave-to{
+            //     height:0px;
+            // }
+            // .sort-leave-active{
+            //     transition: all .2s linear;
+            // }
         }
     }
   </style>
