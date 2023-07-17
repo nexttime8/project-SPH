@@ -906,8 +906,67 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
             })
          }
          ```
+         - 等价于以下代码
+         ```js
+         computed: {
+            bannerList() {
+               return this.$store.state.home.bannerList;
+            }
+         }
+         ```
+      3. mapState 是 Vuex 的辅助函数，在计算属性中生成一些返回 Vuex Store 中状态的函数，以便在组件中直接使用这些状态
+      4. mapState 函数可以接受一个对象或数组，该对象或数组定义了如何从 Vuex Store 中的状态映射到组件的计算属性。
 6. 一些问题
    1. `this.$store.dispatch('home/getBannerList')` 这里写 home/是因为命名空间
    2. 组件的 mounted 里面的`this.$store.dispatch('home/getBannerList')`要和仓库里面的函数名一致！以及 mutations 里面的全大写一致，应该写成动作的形式，避免与变量同名
 
-##
+## 轮播图 swiper
+
+1. 使用
+   1. 安装 swiper
+      - 不安装最新版本
+      - `cnpm install --save swiper@6`
+      - 所有安装都在 app 文件夹下
+   2. 引入 js
+      - `<script src="swiper.min.js"></script>`
+   3. 引入 css
+      - `<link rel="stylesheet" href="swiper.min.css"/>`
+   4. 页面结构全部解析完毕
+   5. 再 new swiper 实例
+2. 多个地方要用轮播图，所以在 main.js 中引入
+   - `import Swiper from 'swiper'`
+3. 将轮播图部分用 v-for 实现
+   ```html
+   <div
+     class="swiper-slide"
+     v-for="(carousel,index) in bannerList"
+     :key="carousel.id"
+   >
+     <img :src="carousel.imgUrl" />
+   </div>
+   ```
+   - 这里的数组 bannerList 是 computed 里面的从仓库中获取到的数据
+4. 直接在组件的 mounted 中 new Swiper 实例？
+   1. 没用，因为 v-for 是动态生成的，异步获取数据再生成轮播图图片
+   2. 也就是 swiper 实例的初始化是在修改仓库中的数据之前，也就是组件还没有获取到数据
+   3. 总之不能再 mounted 中 new Swiper
+   ```js
+   var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
+     loop: true,
+     pagination: {
+       el: ".swiper-pagination",
+     },
+     navigation: {
+       nextEl: ".swiper-button-next",
+       prevEl: ".swiper-button-prev",
+     },
+   })
+   ```
+5. 直接在 updated 钩子里面？
+   - 但凡有响应式数据更新，都会重新创建 swiper 实例
+6. 在 mounted 里面设置 2s 定时器？0
+   - 没用
+7. 要在 main.js 中引入样式，在组件中引入 swiper
+   - `import 'swiper/css/swiper.css'`样式直接引入就好了
+   - `import Swiper from "swiper"`
+8. swiper 引入有问题，swiper 的版本问题，需要 5 版本或更低
