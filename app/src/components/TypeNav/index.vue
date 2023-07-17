@@ -100,8 +100,11 @@
                 }else if(category3id){
                     query.category3id = category3id
                 }
-                location.query = query
-                this.$router.push(location)
+                if(this.$route.params){
+                    location.query = query
+                    location.params = this.$route.params
+                    this.$router.push(location)
+                }
             }
         },
         enterShow(){

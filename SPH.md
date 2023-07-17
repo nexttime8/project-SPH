@@ -1,5 +1,3 @@
-# 项目概要
-
 ## 项目结构
 
 1. Vue 前台项目
@@ -519,3 +517,330 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       - `import "nprogress/nprogress.css"`
    3. 可以直接在 node_modules 文件夹中的 nprogress/nprogress.css 中直接修改进度条的样式
    4. 请求拦截器中调用 start，相应拦截其中调用 done
+
+## Vuex 状态管理库（据说很重要
+
+1. 是什么？Vuex 是官方提供的状态管理库插件，类似于 Redux，集中管理项目中
+2. 什么时候用？组件多、项目大、数据多、维护数据复杂、组件间关系复杂
+3. 核心概念
+   1. state——仓库存储数据的地方
+   2. mutations
+   3. actions
+   4. getters
+   5. modules
+4. 安装
+   1. 在 app 文件夹下
+   2. npm 安装
+5. vuex 基本使用
+   1. src 文件夹下创建 store 文件夹
+   2. 创建 index.js 文件
+   3. 引入 vue
+      - `import Vue from 'vue'`
+   4. 引入 vuex
+      - `import Vuex from 'vuex'`
+   5. 使用插件一次
+      - `Vue.use(Vuex)`
+   6. 对外暴露 Store 类实例
+      - `export default new Vuex.Store({state,mutations,actions,getters})`
+   7. 对 Store 实例配置对象
+      1. state——仓库存储数据
+      2. mutations——修改 state 的唯一手段
+      3. actions——处理 action，书写自己的业务逻辑，处理异步任务
+      4. getters——理解为计算属性，用于简化仓库数据，让组件获取仓库的数据更方便
+      5. modules——
+   8. main.js 文件中
+      1. 引入仓库
+         - `import store from '@/store'`
+      2. 注册仓库，类似注册路由，从而组件身上多了个$store 属性
+         - `new Vue({store})`
+6. 获取仓库 Store 中的数据
+   1. 需要用到 vuex 中的辅助函数 mapState，在组件的 index.vue 文件中引入
+      - `import {mapState} from 'vuex'`
+   2. 之后才能用到 state 里面的数据 count，在 export default 中写计算属性
+      - `computed:{...mapState(['count'])}`
+   3. 在组件中写上上述数据的插值表达式
+   4. 绑定一定的时间，操作仓库数据
+      1. 直接在组件的 index.vue 文件中的 export default 中直接书写
+         - `methods:{方法名(){this.$store.dispatch('add')}}`
+      2. 此外，还要在 store 仓库的 action 配置项中书写上述对应函数
+         - `const actions = {方法名({commit}){commit("ADD")}}`
+      3. 由于 actions 配置项不能直接修改 state，需要在 mutations 里面进行秀嘎
+         - `const mutations = {ADD(state){state.count++}}`
+7. 上述尝试报错
+   1. 报错：TypeError: Cannot read properties of undefined (reading 'state')
+   2. 本质：vue2 的版本和 vuex 的版本不匹配导致的，vuex4 版本只能在 vue3 中使用，vue2 中，要用 vuex3 的版本
+   3. 解决：app 文件夹下执行`npm install vuex@3 --save`
+   4. 事实证明 gpt 不适合解决报错，csdn 上往往会分享报错解决方案
+   5. 重装 vuex 后，需要重装 nprogress，否则显示查不到 nprogress，且显示是生产模式
+8. Vuex 可以模块式开发
+   1. 大仓库数据差分成多个小仓库
+   2. 在 store 文件夹下创建文件夹，路由组件命名的文件夹，里面创建 index.js 文件
+   3. 里面创建 Store 实例配置对象里面的属性对象，并暴露
+      ```js
+      const state = {}
+      const mutations = {}
+      const actions = {}
+      const getters = {}
+      export default {
+        state,
+        mutations,
+        actions,
+        getters,
+      }
+      ```
+   4. 在 store 文件夹的 index.js 文件下，引入小仓库
+      - `import search from './search'`
+      - `import home from './home'`
+   5. 在 store 文件夹的 index.js 文件下，注册模块
+      ```js
+      export default new Vuex.Store({
+        modules: {
+          home,
+          search,
+        },
+      })
+      ```
+   6. 使用模块式开发的时候，如何将事件绑定？
+      - 不同点就是：要说明数据和函数所在的模块
+      ```js
+      methods:{
+         ...mapActions('home',['add'])
+      },
+      computed:{
+         ...mapState('home',['count'])
+      }
+      ```
+      - 最终问题就是：需要在模块的暴露中，添加`namespaced:true`，确保模块有命名空间
+
+## 示例：TypeNav 三级联动展示数据业务
+
+1. 首先把所有全局组件放到 components 文件夹中
+   - 记得修改 main.js 中的路径
+   - 原本 pages/Home/TypeNav 放到 components 里面
+2. 通知 Vuex 发请求，获取数据并防止在仓库中
+   1. 在全局组件的 index.vue 文件中的 export default 中派发一个 action，如名为'categoryList'
+      - `this.$store.dispatch('home/categoryList')`
+      - 作用是通知 Vuex 发请求，获取数据，存储于仓库中
+   2. 找到对应的仓库的 index.js 文件
+      - `const actions = {categoryList(){}}`
+      - 这个 categoryList 里面调用发起请求的函数
+      - 前提是引入这个 api，在@/api 下，直接写`from '@/api'`，一般都是从该文件夹下的 index.js 文件中获取
+      - 作用是通过 API 里面的接口函数调用，向服务器发起请求，获取服务器数据
+3. 在 actions 里面调用发请求函数，返回的是一个 Promise 对象
+   1. async？
+   2. await？必须和 asynce 同时存在
+   3. 提交数据
+   4. 应该写成如下，reqCategoryList 的返回值就会被等待，并赋值给 result
+   ```js
+   async categoryList(){
+      let result = await reqCategoryList()
+   }
+   ```
+4. 从 home 里面讲三级联动移走了，为什么还是使用 home 的 store？
+5. store 的 index.js 里面的 namespace 到底是什么？为什么不加反而出现请求结果，加了报错：unknown action type: categoryList？不加的时候显示 module namespace not found in mapState(): home/？
+   1. 在 Vuex 中，dispatch 是用于触发（dispatch）一个 action。当你在 Vuex 的某个模块中定义了一个 action，并且这个模块启用了命名空间，那么你需要使用模块的命名空间来 dispatch 这个 action。所以应该加上这个模块的名称 home/，即`this.$store.dispatch('moduleName/categoryList')`
+   2. 这样 Vuex 就能找到你定义的 categoryList action 并执行它。如果没有提供命名空间，Vuex 将会在全局的 actions 中查找 categoryList，这就是为什么你会看到 "unknown action type: categoryList"
+6. 要修改仓库中的数据，因此要解构出 commit 提交 mutation（只有 mutations 能够修改 state）
+   ```js
+   async categoryList({commit}){ // 解构！
+      let result = await reqCategoryList()
+      if(resulte.code===200){ // promise成功
+         commit("CATEGORYLIST",result.data) // CATEGORYLIST是取的名字，在mutation中用，提交的数据是resulte.data
+      }
+   }
+   ```
+7. 在 mutation 中写，修改 state 数据
+   ```js
+   const mutations = {
+     CATEGORYLIST(state, categoryList) {
+       state.categoryList = categoryList
+     },
+   }
+   ```
+8. state 初始化数据
+   ```js
+   const state = {
+     categoryList: [], // 因为服务器返回的数据是一个数组
+   }
+   ```
+   - 根据结构的初始值进行初始化类型
+9. 请求的数据已经放到仓库中，要再将仓库中数据获取到全局组件 TypeNav 身上
+   1. 引入 vuex 中的 mapState
+      - `import {mapState} from 'vuex'`
+   2. 计算属性
+      ```js
+      // 看不懂
+      computed:{
+        ...mapState({
+            categoryList:state=>state.home.categoryList
+        })
+      }
+      ```
+   3. 之后在组件中就获取到了数据，是一个三级菜单
+10. 把重复结构删除
+    1. v-for="(c1,index) in categoryList"
+    2. :key="c1.categoryId"
+    3. 三层重复分别是<div class="item bo">、<div class="subitem">和<em>
+    4. 注意使用 c1.categoryChild，总是数组
+    5. 学会看页面结构猜数据结构
+
+## 一级分类动态添加背景颜色
+
+1. 解决方法
+   1. 样式 hover
+   2. JS
+2. 用到上述三级联动的最外层数组的 index，不然直接`v-for="c1 in categoryList"`即可
+   1. 现在需要`v-for="(c1,index in categoryList"`
+   2. 鼠标移入 h3，就动态绑定 data 同步
+3. 通过动态添加类名来控制样式
+   1. :class = "{cur:currentIndex==index}"
+   2. 这个样式放在最外层的 item 身上，因为样式是 item！
+   3. 样式写成{}形式
+4. 再添加一个鼠标移出，事件绑定
+   1. 需要 div.sort 下的 h2 和 h3 都要，也就是从 h3 移到全部商品分类 h2 不会移除效果
+   2. 事件委派、事件代理，将两个放在一个父元素下，将子元素的事件放到父元素身上
+   3. div.sort 和 h2 是兄弟关系
+   4. 没有意义
+
+## JS 控制二三级分类的显示与隐藏
+
+1. 用 js 实现 css 实现的显示与否
+2. 直接不写类名，用动态绑定样式实现
+   - `:style="{display:currentIndex===index?'block':'none'}"`
+   - 而不是继续式样和上面添加背景颜色一样的方法：
+     - `:class="{dis:currentIndex===index}"`
+     - 同时添加类名 dis
+
+## 演示卡顿现象：节流防抖
+
+1. 一级分类从上到下快速划过，mouseenter 不能全部检测到
+2. 防抖
+   1. 前面所有触发都会取消，最后一次执行在规定时间之后才会触发，连续触发只执行一次
+   2. 王者荣耀回城重复点击只执行最后一次，输入框输入只检测/请求规定时间内最后一次
+3. 节流
+   1. 超过时间间隔
+   2. 技能冷却超过时间间隔才能触发，鼠标移动滚动条拖动超过规定时间间隔才触发
+   3. 频繁触发变成少量触发
+4. lodash 插件，里面封装了防抖节流
+   1. 自己写：闭包+延迟器
+   2. 引入 lodash：npm 或者官网下载，script
+   3. 暴露的是\_xxx，函数对象
+   4. script 标签引入
+5. lodash 中的\_.debounce，返回一个 debounced()
+   1. 传入需要防抖的函数
+   2. 传入延迟时间
+   3. 使用
+      1. input.oninput = \_.debounce(function(){},1000)
+      2. 输入完毕之后，延迟一秒再触发
+6. lodash 中的\_.throttle，
+   1. 传入需要节流的函数
+   2. 传入节流时间
+7. 区别
+   1. 防抖是规定时间内一直触发，时间之后才会执行一次
+   2. 节流是规定时间多次触发，时间之内执行一次
+
+## 三级联动节流
+
+1. 一级分类从上到下快速划过，mouseenter 不能全部检测到
+2. 在 TypeNav 组件中引入 lodash
+   - `import _ from 'lodash'`引入了所有的函数
+   - `import throttle from 'lodash/throttle'`按需加载
+3. 把 enterIndex 函数放入 throttle 的 function 里面，设置适当的延迟时间
+   - 不需要\_.，因为 lodash 下直接是 throttle.js 文件，从文件中引入 throttle 函数，而且是默认暴露，不需要写成对象的形式解构
+   - function 不要用箭头函数，涉及 this 问题
+4. 算性能优化
+
+## 点击二级三级分类，路由跳转 search，并传递参数
+
+1. Home 模块跳转到 Search 模块
+2. 把用户选中的产品名称、ID 进行参数传递
+3. 编程式跳转
+   1. push
+   2. replace
+4. 声明式跳转
+   1. 把 a 标签换成 router-link
+   2. 添加 to 进行路由跳转
+   3. 最终会导致卡顿现象，router-link 是一个组件，每次移到哪里都会生成组件实例
+5. 编程式跳转
+   1. 保持 a 标签，@click，在函数里面写 `this.$router.push('/search')`
+   2. 使用事件委派！放在就近的父元素上，没有 v-for 循环语句，只有一个，更优秀
+      1. 问题：如何找到子元素 a 标签，如何获取参数各级分类的名称+id
+      2. 问题：如何区分各级分类
+6. 解决：自定义属性——找到 a 标签
+   1. 给所有的 a 标签，添加上自定义属性
+      - `:data-categoryName="ci.categoryName"`
+      - `:data-categoryiId="ci.categoryId"`
+      - 这里的 i 是变量 1、2、3
+      - 自定义属性名在浏览器中解析成全小写
+   2. 并赋值为当前 a 标签所在的级别的 categoryName
+7. 解决：得到自定义属性的属性值
+   1. 获取事件对象，判断事件节点 e.target
+   2. 解构出需要的属性名
+      - `let {categoryname,category1id,category2id,category3id} = e.target.dataset`
+      - 自定义属性名在浏览器中解析成全小写
+   3. 解构可能不成功，所以后续的操作都是在 categoryname 不为 undefined 的情况下及逆行
+      1. 还要在里面整理路由跳转的参数
+         ```js
+         let location = { name: "search" }
+         let query = { categoryName }
+         ```
+      2. 多级 if 语句判断级别，在函数里中进行 query 的赋值
+      3. 将 location 和 query 合并
+         - `location.query = query`
+      4. 最后进行路由的跳转
+         - `this.$router.push(location)`
+
+## Search 模块三级分类实现
+
+1. TypeNav 分类菜单，过渡动画，全局组件直接用！默认不展开，显示隐藏状态，v-show/v-if
+   - 添加一个 data，show
+2. 在 home 中全局组件 TypeNav 的 mounted 会执行一次，从 home 跳转到 search，TypeNav 的 mounted 又会执行一次
+   1. 如何区分两个模块的 show？
+      - data 里面的 show 初始值设置为 true
+   2. 如何让 search 中 show 初始值为 true 的情况下，初始不显示？mounted+判断路由
+      - 页面挂载完毕里面判断路由路径，不是 home 就不显示
+      - `this.$route.path!='/home'`
+3. 给全部商品分类这个 h2，加上鼠标移入移出的事件处理
+   1. 也要判断路由（移入可以不判断
+   2. 添加两个函数
+4. 过渡动画
+   1. 前提：组件或元素必须要有 v-if 或者 v-show
+   2. 用 transition 标签包裹上述标签
+      1. 要写一个 name 属性
+         - `name="sort"`
+      2. 过渡动画写 name 属性值-xx
+         - `.sort-enter{height:0px}`过渡动画开始状态
+         - `.sort-enter-to{height:461px}`过渡动画结束状态
+         - `.sort-enter-active{}`过渡动画时间、速率
+           - `transition:all .2s linear`
+5. 最终效果瑕疵
+   1. 重复刷新 home，一级菜单部分会出现空
+   2. 从 home 进入 search，一级菜单部分会有不显示的过渡
+      - 因此：移开不要过渡动画更好
+
+## 三级分类列表-性能优化！
+
+1. 问题：home 跳转到 search，会再次发起请求获取三级列表数据，只要组件相互切换用到全局组件 TypeNav，都会重新发起请求
+2. 解决：只发起一次请求
+   1. 本地存储
+   2. 哪个地方只会执行一次？全局组件中？App.vue 中的 mounted 只会执行一次
+   3. App.vue 最先执行，且执行一次
+3. 在 App.vue 的 mounted 中派发一个获取三级列表的 action
+   1. `this.$store.dispatch('getxxxxx')`
+4. `this.$store.dispatch('getxxxxx')`不能放到 main.js 中，this 是组件，组件上才有$store
+   - main.js 不是一个组件
+
+## 合并参数
+
+1. 除了点击 a 标签会跳到 search，点击搜索按钮也会跳转到 search
+2. 都要传一些参数过去，但是要么只有 params 参数，要么只有 query 参数；而在点击了 a 标签之后会有 query 参数，如果再输入并搜索，需要将两个参数都显示；也就是需要相互判断存在性
+   1. 一方面，在三级分类那里，需要判断 params 参数，将其并入
+   2. 另一方面，在 header 那里，需要判断 query 参数，将其并入
+   3. 问题：为什么明明是只有在`if(this.$route.query)或者params`成立的时候才会 push，为什么在没有 this.$route.query 的时候还是正常？
+      1. 三级分类那里，是 params 有，keyword 键存在，只是值为空字符串
+      2. header 搜索那里，query 就是一个空对象
+3. query 参数是等于&连接，params 参数是问号
+
+## home首页开发-轮播图
+
+1. 

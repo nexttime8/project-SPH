@@ -63,11 +63,17 @@
         // 搜索按钮的回调函数，需要向search路由进行跳转
         goSearch(){
             // this.$router.push('/search')
-            this.$router.push({
-                name: "search",
-                params: { keyword: this.keyword||undefined },
-                query: { k: this.keyword.toUpperCase() },
-            })
+            // this.$router.push({
+            //     name: "search",
+            //     params: { keyword: this.keyword||undefined },
+            //     query: { k: this.keyword.toUpperCase() },
+            // })
+            if(this.$route.query){
+                let location = {name:"search",params:{keyword:this.keyword||undefined}}
+                location.query = this.$route.query
+                this.$router.push(location)
+                console.log(this.$route.query)
+            }
         }
     }
   }
