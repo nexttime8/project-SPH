@@ -17,7 +17,7 @@ export default {
     Footer
   },
   mounted(){
-    this.$store.dispatch('home/categoryList')
+    this.$store.dispatch('home/getCategoryList')
   }
 }
 </script>

@@ -841,6 +841,73 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       2. header 搜索那里，query 就是一个空对象
 3. query 参数是等于&连接，params 参数是问号
 
-## home首页开发-轮播图
+## home 首页开发-轮播图+家用电器等
 
-1. 
+1. 轮播图属于 ListContainer 组件，家用电器属于 Floor 组件，服务器没有提供这些数据
+2. mock？模拟，mockjs 模拟数组，“生成随机数据，拦截 ajax 请求”，mock 的数据和后端无关，浏览器不会让 ajax 请求发到后端
+3. 安装 mockjs
+   - `cnpm install --save mockjs`
+4. 使用 mockjs
+   1. 在 src 文件夹创建 mock 文件夹
+   2. 准备 JSON 文件，`mock/xxx.json`
+   3. 把上述 JSON 文件内所需的静态资源放到`public/images`文件夹（public 打包直接会放到 dist
+      - 从原本组件中复制到 public 中
+   4. mock 虚拟数据，`mock/mockServe.js`
+      1. 引入 mock
+         - `import Mock from 'mockjs'`
+      2. 引入 JSON 数据
+         - `import xx from './xx.json'`
+      3. 为什么上面两个文件不用暴露直接引
+         - 图片、JSON 数据格式默认对外暴露，不需要自己暴露
+      4. 调用 mock 方法，传入请求地址参数，传入数据参数
+         - `Mock.mock("/mock/xx",{code:200,data:xx})`
+         - 后面是请求之后返回的参数
+      5. 在 main.js 文件中引入 mockServe.js，执行
+         - `import '@/mock/mockServe'`
+         - 不用在 mockServe.js 中暴露，因为在其他文件用不到，只要在其他文件引入执行
+5. 发起请求，获取数据
+   1. 用 mock 而不是服务器数据，改 api 接口
+      - `src/api/requests.js`是真实的向服务器发起请求，baseURL 为"/api"，要向 mock 发请求，就改为"/mock"，或者直接复制一遍 ajax.js 文件，改一下 baseURL 部分，形成新的`mockRequests.js`；
+      - 之后在 `src/api/index.js`中引入`mockRequests.js`，用 mock 的数据，并像对外暴露接口`requests.js`一样
+      - `import mock from "./mockRequests.js"`
+      - `export const reqBannerList = () => mock({ url: "/banners"})`
+      - 为什么 requests 里面要写 methods:"get"，mockRequests 不要写？？
+   2. 在组件中发起请求
+      1. mounted 挂载完毕后直接派发 action，通过 vuex 发起 ajax 请求，将数据存储到仓库中
+         - `mounted(){this.$store.dispatch('reqBannerList')}`
+   3. 在仓库中获取数据并接收数据修改数据
+      1. 在 store 的对应模块小仓库中获取数据
+         1. 从@/api 中引入
+            - `import { reqBannerList } from "@/api"`
+         2. 在 actions 中获取数据
+            ```js
+            async bannerList({ commit }) {
+               let result = await reqBannerList()
+               if (result.code === 200) {
+                  commit("BANNERLIST", result.data)
+               }
+            },
+            ```
+         3. 是 Promise 对象，要用 async 和 await
+      2. 在 store 对应模块小仓库中用数组等接收数据
+         1. 在 state 中初始化数组等数据
+            - `bannerList: [],`
+         2. 根据获取到的数据，判断是否成功接收后用 commit 提交数据
+      3. 在 store 对应模块小仓库中用 mutation 修改数据
+         - `BANNERLIST(state, bannerList) {state.bannerList bannerList},`
+   4. 仓库中有数据了，组件获取仓库中的数据
+      1. 引入 vuex 的 mapState
+         - `import {mapState} from 'vuex'`
+      2. computed 计算属性
+         ```js
+         computed:{
+            ...mapState({
+                  bannerList:state=>state.home.bannerList
+            })
+         }
+         ```
+6. 一些问题
+   1. `this.$store.dispatch('home/getBannerList')` 这里写 home/是因为命名空间
+   2. 组件的 mounted 里面的`this.$store.dispatch('home/getBannerList')`要和仓库里面的函数名一致！以及 mutations 里面的全大写一致，应该写成动作的形式，避免与变量同名
+
+##

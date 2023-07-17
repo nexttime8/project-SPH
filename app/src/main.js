@@ -12,6 +12,8 @@ Vue.config.productionTip = false
 
 import store from "@/store"
 
+import "@/mock/mockServe"
+
 new Vue({
   render: (h) => h(App),
   router,
