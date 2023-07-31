@@ -839,7 +839,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
    3. 问题：为什么明明是只有在`if(this.$route.query)或者params`成立的时候才会 push，为什么在没有 this.$route.query 的时候还是正常？
       1. 三级分类那里，是 params 有，keyword 键存在，只是值为空字符串
       2. header 搜索那里，query 就是一个空对象
-3. query 参数是等于&连接，params 参数是问号
+3. query 参数是=和&连接，params 参数是问号
 
 ## home 首页开发-轮播图+家用电器等
 
@@ -922,20 +922,20 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 
 ## 轮播图 swiper
 
-1. 使用
+1. 使用步骤
    1. 安装 swiper
       - 不安装最新版本
-      - `cnpm install --save swiper@6`
+      - `cnpm install --save swiper@5`
       - 所有安装都在 app 文件夹下
-   2. 引入 js
+   2. 引入包（js 和 css）
       - `<script src="swiper.min.js"></script>`
-   3. 引入 css
       - `<link rel="stylesheet" href="swiper.min.css"/>`
-   4. 页面结构全部解析完毕
-   5. 再 new swiper 实例
-2. 多个地方要用轮播图，所以在 main.js 中引入
-   - `import Swiper from 'swiper'`
-3. 将轮播图部分用 v-for 实现
+   3. 页面结构全部解析完毕，引入后，创建轮播图实例 `new Swiper()`
+   4. 优化
+      1. 多个地方用轮播图，在入口文件中引入，在 main.js 中引入样式，在组件中引入 swiper
+         - `import 'swiper/css/swiper.css'`样式直接引入就好了，不要`import a from b`
+         - `import Swiper from "swiper"`swiper 引入有问题，swiper 的版本问题，需要 5 版本或更低
+2. 将轮播图部分用 v-for 实现（carousel 是轮播图）
    ```html
    <div
      class="swiper-slide"
@@ -946,15 +946,16 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
    </div>
    ```
    - 这里的数组 bannerList 是 computed 里面的从仓库中获取到的数据
-4. 直接在组件的 mounted 中 new Swiper 实例？
-   1. 没用，因为 v-for 是动态生成的，异步获取数据再生成轮播图图片
-   2. 也就是 swiper 实例的初始化是在修改仓库中的数据之前，也就是组件还没有获取到数据
-   3. 总之不能再 mounted 中 new Swiper
+3. （**异步数据的 Swiper 实例写在哪**）直接在组件的 mounted 中 new Swiper 实例？
+   1. 没用，因为 v-for 是动态生成的，**异步获取数据**再生成轮播图图片
+   2. 如果在 mounted 中，就是 swiper 实例的初始化是在修改仓库中的数据之前，组件还没有获取到数据
+   3. **首先知道 mounted 是结构已经有了，挂载完毕没错，但是 v-for 语句的问题就是，需要在服务器返回数据之后（mock 模拟服务端返回数据）， v-for 的那个数组才会有，才会进行结构的生成。涉及到 axios、涉及到异步，mounted 阶段就已经有了结构这句话就不成立了，获取 banners 数据的 action 是在 mounted 中派发的，但是这是一个异步操作，所以要在 mutations 修改数据之后才能 new Swiper 实例**
    ```js
    var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
      loop: true,
      pagination: {
        el: ".swiper-pagination",
+       clickable: true, // 点击小球切换图片
      },
      navigation: {
        nextEl: ".swiper-button-next",
@@ -962,11 +963,11 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
      },
    })
    ```
-5. 直接在 updated 钩子里面？
+4. 直接在 updated 钩子里面？
    - 但凡有响应式数据更新，都会重新创建 swiper 实例
-6. 在 mounted 里面设置 2s 定时器？0
+5. 在 mounted 里面设置 2s 定时器？0
    - 没用
-7. 要在 main.js 中引入样式，在组件中引入 swiper
-   - `import 'swiper/css/swiper.css'`样式直接引入就好了
-   - `import Swiper from "swiper"`
-8. swiper 引入有问题，swiper 的版本问题，需要 5 版本或更低
+6. 解决方案：watch+nextTick
+   1. watch 能够监测到异步数据获取情况
+   2. nextTick 能够在下次 DOM **更新循环（v-for）**结束之后 执行延迟回调，再修改数据之后立即使用这个方法，可以获取到更新后的 dom
+7. 移动端（rem、视口约束）swiper 可以移动端也可以 PC 端

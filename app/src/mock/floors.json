@@ -32,7 +32,8 @@
             "text": "高端电器"
         }
     ],
-    "carouselList": [{
+    "carouselList": [
+        {
             "id": "0011",
             "imgUrl": "/images/floor-1-b01.png"
         },
@@ -58,7 +59,8 @@
     "name": "手机通讯",
     "keywords": ["节能补贴2", "4K电视2", "空气净化器2", "IH电饭煲2", "滚筒洗衣机2", "电热水器2"],
     "imgUrl": "/images/floor-1-1.png",
-    "navList": [{
+    "navList": [
+        {
             "url": "#",
             "text": "热门2"
         },
@@ -87,7 +89,8 @@
             "text": "高端电器2"
         }
     ],
-    "carouselList": [{
+    "carouselList": [
+        {
             "id": "0011",
             "imgUrl": "/images/floor-1-b01.png"
         },
