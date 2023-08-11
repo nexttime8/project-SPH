@@ -7,21 +7,20 @@
 </template>
 
 <script>
-import Header from './components/Header'
-import Footer from './components/Footer'
+import Header from "./components/Header"
+import Footer from "./components/Footer"
 
 export default {
-  name: 'SPH-Header',//Component name "" should always be multi-word.xxx-yyy
+  name: "SPH-Header", //Component name "" should always be multi-word.xxx-yyy
   components: {
     Header,
-    Footer
+    Footer,
   },
-  mounted(){
-    this.$store.dispatch('home/getCategoryList')
-  }
+  mounted() {
+    // 要不要指定home路径？
+    this.$store.dispatch("getCategoryList")
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

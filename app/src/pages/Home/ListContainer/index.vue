@@ -4,24 +4,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
-          <div class="swiper-wrapper">
-            <div
-              class="swiper-slide"
-              v-for="(carousel, index) in bannerList"
-              :key="carousel.id"
-            >
-              <img :src="carousel.imgUrl" />
-              <!-- <img src="./images/banner1.jpg" /> -->
-            </div>
-          </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-
-          <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
+        <Carousel :list="bannerList" />
       </div>
       <div class="right">
         <div class="news">
@@ -98,48 +81,24 @@
 
 <script>
 import { mapState } from "vuex"
-import Swiper from "swiper"
-import { nextTick } from "vue"
 export default {
   name: "",
   mounted() {
-    this.$store.dispatch("home/getBannerList")
+    // `home/getBannerList` 还是 `getBannerList`
+    this.$store.dispatch("getBannerList")
     /* setTimeout(() => {
             // 用定时器实现new Swiper不合理
         },2000); */
   },
   computed: {
+    /* 这里的bannerList是为了watch服务的，便于监视 */
+    // 这两个相同含义！
+    // bannerList() {
+    //   return this.$store.state.home.bannerList
+    // },
     ...mapState({
       bannerList: (state) => state.home.bannerList,
     }),
-  },
-  computed: {
-    /* 这里的bannerList是为了watch服务的，便于监视 */
-    bannerList() {
-      return this.$store.state.home.bannerList
-    },
-  },
-  /* watch写成对象的形式 */
-  watch: {
-    /* bannerList有变化，从空到有 */
-    bannerList: {
-      /* 对象写法 */
-      handler(newValue, oldValue) {
-        /* 对象写法必须要有handler，是在发生变化之后执行（只能保证bannerList数据已经有了，无法保证结构渲染完成） */
-        var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
-          loop: true,
-          slidesPerView: 1,
-          pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-          },
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-        })
-      },
-    },
   },
 }
 </script>

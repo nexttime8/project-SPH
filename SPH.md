@@ -1,21 +1,19 @@
-## 项目结构
+# 项目结构
+
+## 尚品汇项目整体内容
 
 1. Vue 前台项目
-
    - Vue 前台项目，尚品汇电商平台，类似于京东电商类项目
-
 2. Vue 后台管理系统
    - Vue 后台项目，后台管理系统，市场当中比较火热项目之一
 3. 数据可视化
    - 数据可视化技术 ECharts、Canvas、SVG 等
 
-## Vue 前台项目
-
-### 技术架构
+## 技术架构
 
 Vue+Webpack+VueX+Vue-router+Axios+Less
 
-### 功能概要
+## 功能概要
 
 - 封装通用组件
 - 登陆注册
@@ -24,25 +22,6 @@ Vue+Webpack+VueX+Vue-router+Axios+Less
 - 购物车
 - 支付
 - 性能优化
-
-## Vue 后台项目
-
-### 技术架构
-
-Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
-
-### 功能概要
-
-- ElementUI
-- 菜单权限
-- 按钮权限
-- 数据可视化
-
-## 数据可视化
-
-- ECharts 数据可视化开源库
-- Canvas 画布
-- SVG 矢量图
 
 ## 项目配置
 
@@ -73,7 +52,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
 }
 ```
 
-## 项目路由分析
+## 前端项目路由分析
 
 1. 前端路由-vue-router
    - 理解为键值对？
@@ -83,9 +62,9 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
    - 中间路由组件分为：主页路由组件 home 、搜索路由组件 search、登录路由组件 login、注册路由组件 register
    - 上下结构为非路由组件：头部和底部 header 和 footer（login、register 没有）；非路由组件被路由组件所共用
 
-## 开始实现
+# 整体结构实现
 
-### 非路由组件创建（footer、header）
+## 非路由组件创建（footer、header）
 
 0. 基于静态页面，项目的实现不关注 html+css，关注项目业务与逻辑
 1. 创建非路由组件组件流程(以 header 为例)
@@ -127,7 +106,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
    - 保存会自动添加上分号怎么消除？
    - 发现是 prettier 插件的问题，设置取消勾选 semicolo 即可
 
-### 路由组件创建（home、search、login、register）
+## 路由组件创建（home、search、login、register）
 
 0. 路由组件的创建不同于非路由组件，需要 vue-router 插件
    - 安装命令`npm install --save vue-router`
@@ -219,7 +198,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
         - 在 script 标签的 export default 中添加 methods:{}
         - 定义函数为 `函数名(){this.$router.push('/search')}`
 
-### 组件的显示与隐藏（footer 非路由组件可选）
+## 组件的显示与隐藏（footer 非路由组件可选）
 
 1. 进入 login 和 register 路由组件的时候，footer 这个非路由组件不显示
 2. 显示与隐藏？
@@ -314,7 +293,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
     - 对象写法，给路由组件传递对象 `props:{k:v}`，路由组件本身可以接收 `props:['k']`；之后路由组件身上多了一个$attrs ，有 k 属性
     - 函数写法，params 参数和 query 参数都通过 props 传递给路由组件`props:(route)=>{return keyword:$route.params.keyword,k:$route.query.k}`或者`props:(route)=>({keyword:$route.params.keyword,k:$route.query.k})`；之后路由组件身上多了一个$attrs ，有 k 属性，同时 props 里面有 keyword
 
-### 问题引入：编程式路由跳转到当前路由（参数不变），多次执行会抛出 NavigationDuplicated 的警告错误
+## 问题引入：编程式路由跳转到当前路由（参数不变），多次执行会抛出 NavigationDuplicated 的警告错误
 
 1. vue-router3.6.5 有 promise，查看 this.$route.push 的返回值，是 promise 有成功还是失败的回调，resolve 和 reject
    - 解决 1：push 参数最后添加两个回调()=>{},()=>{}或者()=>{},(e)=>{console.log(e)}
@@ -334,7 +313,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
         - 当 resolve 和 reject 都不存在时
           - `originPush.call(this,location,()=>{},()=>{})`
 
-### 拆分 home 模块组件
+## 拆分 home 模块组件
 
 1. 流程
    1. 编写静态页面 html+css
@@ -612,6 +591,8 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       ```
       - 最终问题就是：需要在模块的暴露中，添加`namespaced:true`，确保模块有命名空间
 
+# home 模块
+
 ## 示例：TypeNav 三级联动展示数据业务
 
 1. 首先把所有全局组件放到 components 文件夹中
@@ -841,7 +822,7 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
       2. header 搜索那里，query 就是一个空对象
 3. query 参数是=和&连接，params 参数是问号
 
-## home 首页开发-轮播图+家用电器等
+## 轮播图+家用电器等
 
 1. 轮播图属于 ListContainer 组件，家用电器属于 Floor 组件，服务器没有提供这些数据
 2. mock？模拟，mockjs 模拟数组，“生成随机数据，拦截 ajax 请求”，mock 的数据和后端无关，浏览器不会让 ajax 请求发到后端
@@ -969,5 +950,177 @@ Vue+Webpack+VueX+Vue-router+Axios+SCSS+ElementUI
    - 没用
 6. 解决方案：watch+nextTick
    1. watch 能够监测到异步数据获取情况
-   2. nextTick 能够在下次 DOM **更新循环（v-for）**结束之后 执行延迟回调，再修改数据之后立即使用这个方法，可以获取到更新后的 dom
+   2. nextTick
+      1. 能够在下次 DOM **更新循环（v-for）**结束之后 执行延迟回调；在修改数据之后立即使用这个方法，可以获取到更新后的 dom
+      2. 保证页面中的结构一定是有的，经常和很多插件一起使用（插件也需要 dom 都存在）
 7. 移动端（rem、视口约束）swiper 可以移动端也可以 PC 端
+
+## 获取 floor 组件 mock 数据
+
+1. vue 中获取 dom 节点，不再是用`document.querySelector('#xx')`获取，而是 ref
+   1. 在需要获取的 dom 元素身上设置属性`ref = "xx"`
+   2. 通过`this.$refs.xx`获取 dom
+2. mock 数据的流程
+   1. 静态有了
+   2. 写 api，向服务器发请求
+      1. `src/api`中写
+      2. 写对外暴露函数，获取数据
+   3. 写 vuex 三连环
+      1. `src/store/xx/yy.js`中写
+      2. 从 api 里面导入暴露的那个函数
+         1. **不懂 mockRequests 的用法，mockRequests.js 里面明明不是这样定义的呀？**
+      3. 写 actions 获取数据，声明 async 函数，函数参数写`{commit}`，await 那个导入的函数调用，判断状态码并 commit 数据
+         1. 注意：为什么写成`{commit}`的形式，因为 actions 里面的函数的第一个参数是`context`上下文对象，写成`{commit}`是从`context`对象上解构出`commit`；第二个参数就是 dispatch 传过来的参数（dispatch 的第二个参数）
+      4. 写 mutations 修改数据，声明全大写函数，参数是 stata 和数据，将数据传给 state
+      5. 写 state 数据，因为 mutations 要传给 state，所以 state 里面要事先声明
+         1. 需要先派发，查看数据的类型，才能初始设置
+   4. 组件拿数据，页面展示数据
+      1. 需要在 home 路由组件里面派发这个 action（mounted 里面），因为他需要 v-for 遍历 生成 floor 组件（轮播图），因此不在 floor 组件中派发
+         1. `this.$store.dispatch('home/getFLoorList')`
+         2. 注意：如果 `store/home/index.js` 里面没有指定命名空间为 true，就不需要 home 路径，指定了就需要`this.$store.dispatch("home/getFloorList")`
+      2. 把数据放到 home 里面，来生成多个 floor 组件实例，在子组件中用 props 接收数据
+         1. 因为要用到 vuex 仓库里面的数据，所以导入 mapState:`import {mapState} from vuex`
+         2. 在 computed 里面计算得到需要的数据，`state.文件夹.state里面的数据名`
+            ```
+            ...mapState({
+               floorList:(state)=>state.home.floorList
+            })
+            <!-- 这两个写法相同 -->
+            bannerList() {
+               return this.$store.state.home.bannerList
+            },
+            ```
+3. 组件间通信方式【面试】
+   1. props：父子组件通信；直接`v-bind:属性名`
+   2. 自定义事件：$on $emit 父子组件通信
+   3. 全局事件总线：$bus 全能
+   4. pubsub-js：vue 中几乎不用 全能
+   5. 插槽 slot
+   6. vuex
+4. floor 的轮播图，可以放在 mounted 里面！区分：
+   1. 因为这里的请求不是在当前组件内部发，而是在 home 里面发的
+   2. 也就是数据是父组件给的，props 传递过来的，请求父组件发的
+   3. 所以只需要在 mounted 里面写，不需要 watch+nextTick
+   4. 但是一定要给 swiper 实例绑定 dom 元素
+5. 将父组件的数据传过来，动态渲染页面
+   1. v-for 是用在 li 身上，不是 ul 身上
+   2. v-for 的使用位置要具体情况具体分析，比如轮播图，是用在 img 外层的 div 上
+6. 搞清楚 swiper 是怎么引入的
+
+## 共用 careroul 组件
+
+1. 封装为全局组件，将首页的轮播图拆分成共用全局组件；还有比如说页面跳转等；只要保证结构一样
+2. 一个是用 watch+nextTick，一个是 mounted，写法不同，因此项 watch+nextTick 靠齐
+   1. mounted 直接用的数据，根本就没有发生过变化怎么办？用 immediate 为 true，初始就执行一次！
+3. 共用组件写在 components 里面
+4. 全局组件的注册
+   1. 入口文件`main.js`中
+      1. 引入
+      2. 注册
+   2. **其中这个全局组件本身，必须要有 name 属性，而且 name 属性值，就是之后用到的组件名称！**
+   3. 注意两个不同的地方用到，传过来的数据不同，但是都是用 list 接收
+
+# 一直弄不明白的经典问题
+
+1. watch、computed、data 写成函数还是对象的形式？为什么？watch 和 computed 里面写成函数还是对象的形式？为什么？——watch 和 computed 的属性的对向形式能执行更多操作
+   1. data
+      1. `data` 本身**必须是一个函数**，这样每个组件实例可以维护一份独立的数据副本。如果你使用一个对象，那么所有的组件实例将共享相同的数据对象，导致一个实例中的更改会影响到所有实例。所以正确的做法是：
+   ```javascript
+   data() {
+     return {
+       count: 0
+     };
+   }
+   ```
+   2. computed
+      1. `computed` 本身是一个对象。`computed` 属性可以是对象或函数。通常，计算属性是用作简单的 getter 函数，返回一个值。例如：
+      ```javascript
+      computed: {
+         fullName() {
+            return this.firstName + ' ' + this.lastName;
+         }
+      }
+      ```
+      2. 但如果你需要一个 setter，你可以使用一个对象，其中包含 `get` 和 `set` 函数：
+      ```javascript
+      computed: {
+         fullName: {
+            get() {
+               return this.firstName + ' ' + this.lastName;
+            },
+            set(newValue) {
+               var names = newValue.split(' ');
+               this.firstName = names[0];
+               this.lastName = names[names.length - 1];
+            }
+         }
+      }
+      ```
+   3. watch
+      1. `watch`本身是一个对象。`watch` 属性可以是函数或对象。如果你只是想监视一个属性的变化并执行一些代码，你可以使用一个简单的函数：
+      ```javascript
+      watch: {
+         firstName(newVal, oldVal) {
+            // 做一些事情
+         }
+      }
+      ```
+      2. 但是如果你需要更复杂的监视，例如选项，比如延迟执行，那么你可以使用一个对象：
+      ```javascript
+      watch: {
+         firstName: {
+            handler(newVal, oldVal) {
+               // 做一些事情
+            },
+            immediate: true,
+            deep: true
+         }
+      }
+      ```
+2. mounted 写成函数还是对象的形式
+3. methods 写成函数还是对象的形式
+   1. 在 Vue 组件中，methods 属性应该是一个对象，其中包含你想要用于该组件的方法。
+4.
+
+# Search 模块
+
+## Search 模块的静态组件
+
+1. 明确各个模块的开发通用流程
+   1. 静态页面，静态页面组件拆分
+   2. 发请求，API
+   3. vuex，三连环
+   4. 组件获取仓库数据，动态展示数据
+2. search 里面的分层拆分组件
+   1. 拆分出了 Main 组件和 ToolBar 组件
+   2. 把 selector 作为 `Search/Main` 的子组件
+3. Search 模块开发流程
+   1. 静态页面分为 html、CSS 和 js，按模块放入 Seaarch 这个 pages 里面，并细分子组件
+   2. 根据接口文档，在 api 文件夹里面写接口
+      1. 书写位置
+         1. 真正的后端接口写在`src/api/request.js`文件中
+         2. mock 接口写在`src/api/mockRequest.js`文件中
+         3. 注意整体都是在`src/api/index.js`文件里面写
+      2. 注意：请求类型，是否带参，怎么知道一个接口是否要传参？
+         1. 明明显示所有的参数都不是必选，为什么要传参？
+      3. axios 发请求有两种
+         1. `axios.get('url')`直接传 url
+         2. `axios({})`传配置对象
+         3. `axios.create({baseURL:''})`如果指定了 baseURL，之后调用 `axios.create`的返回函数的时候，给出的 url 就不需要包含这个基础路径，如果需要传参数，就是需要指定 data 为传入的参数，调用函数的时候，至少要传入一个空对象
+            1. **注意参数名：url、method、data**
+   3. 写 vuex，三连环（四连环）
+      1. 要在 search 里面导入那个在 api 里面的定义的函数
+      2. actions 里面写 async 函数，参数是{commit}和 dispatch 传过来的参数
+      3. mutations 里面写大写字母函数，参数是 state 和 state 中的数据名
+      4. stata 里面的数据类型，需要先 dispatch 来判断
+         1. 在开发者工具的 vuex 里面查看
+      5. 用 vuex 中的 getters，getters 就是为了简化数据，直接在仓库中简化，之后再组件中方便获取\
+         1. 所需要的数据在 getters 里面写好
+         2. 之后通过 mapGetters 获取，计算属性里面；mapGetters 里面写成数组，因为是属于当前小仓库的 state
+   4. vuex 仓库中有了数据之后，要将数据存放到组件中去
+      1. 用 map
+      2. **从仓库获取数据，state.xxx.xxx，注意这里是文件夹路径，注意大小写！**
+4. 有时候 vue 的报错是真看不出来什么问题，真烦
+5. 为什么看不到 Search 请求接口获取到的数据？
+   1. 因为没有切换到 search 模块
+6. 要把请求封装成函数，在必要时调用即可发送请求
