@@ -11,7 +11,7 @@ import Main from "@/pages/Search/Main"
 import ToolBar from "@/pages/Search/ToolBar"
 import { mapState } from "vuex"
 export default {
-  name: "",
+  name: "SearchComp",
   // 组件注册是对象形式
   components: {
     ToolBar,

@@ -26,7 +26,7 @@
             </div>
             <div class="floorBanner">
               <!-- 基本上id都用ref代替？！ -->
-              <Carousel :list="floorData.carouselList" />
+              <CarouselComp :list="floorData.carouselList" />
             </div>
             <div class="split">
               <span class="floor-x-line"></span>

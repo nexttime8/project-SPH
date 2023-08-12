@@ -5,9 +5,9 @@ import store from "@/store"
 
 // 注册全局组件
 import TypeNav from "@/components/TypeNav"
-import Carousel from "@/components/Carousel"
+import CarouselComp from "@/components/Carousel"
 Vue.component(TypeNav.name, TypeNav)
-Vue.component(Carousel.name, Carousel)
+Vue.component(CarouselComp.name, CarouselComp)
 
 Vue.config.productionTip = false
 

@@ -6,7 +6,7 @@
     <Rank />
     <Like />
     <Floor
-      v-for="(floorData, index) in floorList"
+      v-for="floorData in floorList"
       :key="floorData.id"
       :floorData="floorData"
     />
